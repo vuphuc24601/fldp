@@ -8,3 +8,5 @@ data/
 results/models/
 
 test.ipynb
+
+venv/

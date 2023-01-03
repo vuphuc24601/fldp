@@ -54,3 +54,6 @@ def get_mnist_iid(dataset, num_users, num_items):
         dict_users[i] = list(np.random.choice(all_idxs, num_items, replace=False))
         all_idxs = list(set(all_idxs) - set(dict_users[i]))
     return dict_users
+
+
+

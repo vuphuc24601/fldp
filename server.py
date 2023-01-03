@@ -3,7 +3,7 @@ from copy import deepcopy
 import torch
 
 from metrics import Metric
-from models import MLP
+from models import MLP, Net
 
 
 def FedAvg(list_params):
@@ -23,9 +23,10 @@ def test(args, param, loader):
         - loader: test set
     """
 
-    if args.dataset == "mnist":
-        # print("model used: mnist")
+    if args.model == "mlp":
         model = MLP().to(args.device)
+    elif args.model == "net":
+        model = Net().to(args.device)
 
     model.load_state_dict(param)
     model.eval()

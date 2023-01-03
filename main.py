@@ -10,10 +10,17 @@ from tqdm import tqdm
 
 import server
 from client import client_train
-from models import MLP
+from models import MLP, Net
 from options import args_parser
 from utils import get_mnist_iid, load_data
 
+import numpy as np
+
+np.random.seed(42)
+torch.manual_seed(42)
+torch.cuda.manual_seed(42)
+torch.backends.cudnn.enabled = False
+torch.backends.cudnn.deterministic = True
 
 def fldp(args):
     if args.dataset == "mnist":
@@ -42,6 +49,8 @@ def fldp(args):
     # Load model
     if args.model == "mlp":
         global_param = MLP().state_dict()
+    elif args.model == "net":
+        global_param = Net().state_dict()
     else:
         # TODO
         pass
@@ -68,6 +77,7 @@ def fldp(args):
         list_params = []
 
         chosen_clients = random.sample(range(args.num_users), args.num_chosen_clients)
+        chosen_clients.sort()
 
         for i in tqdm(chosen_clients):
             print(f"-----------client {i} starts training----------")
@@ -110,7 +120,7 @@ def fldp(args):
             res["val"]["loss"][i].append(summ["loss"])
             res["val"]["acc"][i].append(summ["correct"] / summ["total"])
 
-        folder_path = f"./results/models/"
+        folder_path = f"./results/models/fl"
         os.makedirs(folder_path, exist_ok=True)
         torch.save(
             global_param,
@@ -119,7 +129,7 @@ def fldp(args):
         print("Time {}".format(time.time() - start))
         print()
 
-    with open(args.out_file, "wb") as fp:
+    with open(args.out_file_baseline, "wb") as fp:
         pickle.dump(res, fp)
 
 
