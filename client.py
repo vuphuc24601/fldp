@@ -1,8 +1,6 @@
 from copy import deepcopy
-from random import randint
 
 import torch
-from opacus import PrivacyEngine
 
 from metrics import Metric
 from models import MLP, Net
@@ -28,7 +26,6 @@ def client_train(args, param, loader, epochs):
 
     metric = Metric()
 
-
     for epoch in range(epochs):
         for data, target in loader:
             if len(data) == 1:  # Avoid error when using BatchNorm
@@ -49,6 +46,5 @@ def client_train(args, param, loader, epochs):
                 metric.update(
                     output.argmax(dim=1).detach().cpu(), target.cpu(), loss.item()
                 )
-
 
     return deepcopy(model.cpu().state_dict()), metric.get()
