@@ -4,18 +4,17 @@ import random
 import time
 from copy import deepcopy
 
+import numpy as np
 import torch
 from torch.utils.data import DataLoader, Subset
 from tqdm import tqdm
 
 import server
 from client import client_train
+from dp import add_noise, get_noise_scale, get_server_noise_scale
 from models import MLP
 from options import args_parser
 from utils import get_mnist_iid, load_data
-
-import numpy as np
-from dp import get_noise_scale, add_noise, get_server_noise_scale
 
 np.random.seed(42)
 torch.manual_seed(42)
@@ -94,8 +93,6 @@ def fldp(args):
 
             list_params.append(tem_param_dp)
 
-
-
         res["train"]["loss"]["avg"].append(train_loss / args.num_users)
         res["train"]["acc"]["avg"].append(train_corr / train_total)
 
@@ -108,7 +105,8 @@ def fldp(args):
         # Server aggregation
 
         global_param = server.FedAvg(list_params)
-        if args.num_rounds > args.num_rounds * (args.num_users ** 2):
+        if args.num_rounds > args.num_uplink_exposures * (args.num_users**0.5):
+            print("yo")
             server_noise_scale = get_server_noise_scale(args)
             global_param = add_noise(args, server_noise_scale, global_param)
 
@@ -130,15 +128,23 @@ def fldp(args):
             res["val"]["loss"][i].append(summ["loss"])
             res["val"]["acc"][i].append(summ["correct"] / summ["total"])
 
-        folder_path = f"./results/models/fldp"
-        os.makedirs(folder_path, exist_ok=True)
-        torch.save(
-            global_param,
-            f"{folder_path}/round{round}.pt",
-        )
+        # folder_path = (f"./results/models/fldp/"
+        #                 f"N{args.num_users}_"
+        #                 f"K{args.num_chosen_clients}_"
+        #                 f"DPC{args.num_data_per_user}_"
+        #                 f"BS{args.local_bs}_"
+        #                 f"E{args.privacy_budget}_"
+        #                 f"T{args.num_rounds}_"
+        #                 f"C{args.clipping_threshold}")
+        #
+        # os.makedirs(folder_path, exist_ok=True)
+        # torch.save(
+        #     global_param,
+        #     f"{folder_path}/round{round}.pt"
+        # )
+
         print("Time {}".format(time.time() - start))
         print()
-
 
     with open(args.out_file_dp, "wb") as fp:
         pickle.dump(res, fp)

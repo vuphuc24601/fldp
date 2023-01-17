@@ -15,9 +15,9 @@ def args_parser():
     )
     parser.add_argument("--start_round", type=int, default=0, help="start round of fl")
 
-    parser.add_argument("--num_users", type=int, default=50, help="number of users: N")
+    parser.add_argument("--num_users", type=int, default=20, help="number of users: N")
     parser.add_argument(
-        "--num_chosen_clients", type=int, default=50, help="number of users: K"
+        "--num_chosen_clients", type=int, default=20, help="number of users: K"
     )
     parser.add_argument(
         "--local_ep", type=int, default=5, help="the number of local epochs: E"
@@ -31,7 +31,7 @@ def args_parser():
     parser.add_argument("--model", type=str, default="mlp", help="model name")
 
     # dp arguments
-    parser.add_argument("--privacy_budget", type=int, default=50)
+    parser.add_argument("--privacy_budget", type=int, default=10)
     parser.add_argument("--delta", type=float, default=0.01)
     parser.add_argument(
         "--clipping_threshold", type=int, default=1, help="clipping threshold"
@@ -39,7 +39,7 @@ def args_parser():
     parser.add_argument(
         "--num_uplink_exposures",
         type=int,
-        default=4,
+        default=25,
         help="number of uplink channels exposures: L",
     )
 
@@ -74,6 +74,7 @@ def args_parser():
         f"DPC{args.num_data_per_user}_"
         f"BS{args.local_bs}_"
         f"T{args.num_rounds}_"
+        f"LR{args.lr}_"
         f"C{args.clipping_threshold}.pkl"
     )
 
@@ -84,6 +85,8 @@ def args_parser():
         f"BS{args.local_bs}_"
         f"E{args.privacy_budget}_"
         f"T{args.num_rounds}_"
+        f"L{args.num_uplink_exposures}_"
+        f"LR{args.lr}_"
         f"C{args.clipping_threshold}.pkl"
     )
 

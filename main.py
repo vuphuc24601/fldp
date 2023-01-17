@@ -4,6 +4,7 @@ import random
 import time
 from copy import deepcopy
 
+import numpy as np
 import torch
 from torch.utils.data import DataLoader, Subset
 from tqdm import tqdm
@@ -14,13 +15,12 @@ from models import MLP, Net
 from options import args_parser
 from utils import get_mnist_iid, load_data
 
-import numpy as np
-
 np.random.seed(42)
 torch.manual_seed(42)
 torch.cuda.manual_seed(42)
 torch.backends.cudnn.enabled = False
 torch.backends.cudnn.deterministic = True
+
 
 def fldp(args):
     if args.dataset == "mnist":
@@ -120,12 +120,19 @@ def fldp(args):
             res["val"]["loss"][i].append(summ["loss"])
             res["val"]["acc"][i].append(summ["correct"] / summ["total"])
 
-        folder_path = f"./results/models/fl"
-        os.makedirs(folder_path, exist_ok=True)
-        torch.save(
-            global_param,
-            f"{folder_path}/round{round}.pt",
-        )
+        # folder_path = f"./results/models/fl/" \
+        #                 f"N{args.num_users}_" \
+        #                 f"K{args.num_chosen_clients}_" \
+        #                 f"DPC{args.num_data_per_user}_" \
+        #                 f"BS{args.local_bs}_" \
+        #                 f"T{args.num_rounds}_" \
+        #                 f"C{args.clipping_threshold}"
+        #
+        # os.makedirs(folder_path, exist_ok=True)
+        # torch.save(
+        #     global_param,
+        #     f"{folder_path}/round{round}.pt"
+        # )
         print("Time {}".format(time.time() - start))
         print()
 
